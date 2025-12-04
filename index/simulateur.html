@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur de dépendance</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="hero small">
+    <nav class="navbar">
+        <a href="index.html" class="logo">NIRD</a>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <ul id="menu" class="menu">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="nird.html">Comprendre</a></li>
+            <li><a href="actions.html">Actions</a></li>
+            <li><a href="simulateur.html" class="active">Simulateur</a></li>
+            <li><a href="ressources.html">Ressources</a></li>
+            <li><a href="etablissements.html">Exemples</a></li>
+            <li><a href="contribute.html">Contribuer</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero-content">
+        <h1>Simulateur de dépendance</h1>
+        <p>Évalue ton niveau de dépendance aux Big Tech</p>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="card">
+        <h2>Questionnaire</h2>
+
+        <form onsubmit="runSim(); return false;">
+            <label>Utilisez-vous Windows ou macOS ?</label>
+            <select id="q1">
+                <option value="2">Toujours</option>
+                <option value="1">Parfois</option>
+                <option value="0">Jamais</option>
+            </select>
+
+            <label>Utilisez-vous Google Drive ?</label>
+            <select id="q2">
+                <option value="2">Oui</option>
+                <option value="1">Un peu</option>
+                <option value="0">Non</option>
+            </select>
+
+            <label>Utilisez-vous des logiciels libres ?</label>
+            <select id="q3">
+                <option value="0">Jamais</option>
+                <option value="1">Parfois</option>
+                <option value="2">Régulièrement</option>
+            </select>
+
+            <button class="btn">Voir le résultat</button>
+
+            <div id="sim-res" class="msg"></div>
+        </form>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <p>© 2025 — NIRD</p>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>
