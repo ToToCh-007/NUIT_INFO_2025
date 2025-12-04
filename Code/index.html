@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Résistance numérique — Professeur Dérivus Approved</title>
+<style>
+  :root{
+    --bg:#0f1724; --card:#0b1220; --text:#e6eef8; --muted:#9fb0d0;
+    --accent:#8bd3c7;
+  }
+  body{
+    margin:0; font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background:linear-gradient(180deg,#071022 0%, #081126 100%); color:var(--text);
+    display:flex; align-items:flex-start; justify-content:center; padding:24px;
+    min-height:100vh;
+  }
+  .wrap{width:980px; max-width:96%; margin:20px auto;}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        border:1px solid rgba(255,255,255,0.04); padding:20px; border-radius:12px; box-shadow:0 8px 30px rgba(3,6,15,0.7);}
+  h1{margin:0 0 6px 0; font-size:20px;}
+  p.lead{margin:0 0 18px 0; color:var(--muted); font-size:14px;}
+  .grid{display:grid; grid-template-columns:360px 1fr; gap:18px;}
+  .controls{padding:12px; background:rgba(255,255,255,0.01); border-radius:10px;}
+  label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px;}
+  select{width:100%; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:#071126; color:var(--text);}
+  .res-out{padding:16px; border-radius:10px; background:linear-gradient(90deg, rgba(139,211,199,0.04), rgba(139,211,199,0.02)); border:1px solid rgba(139,211,199,0.06); margin-bottom:12px;}
+  .big{font-size:24px; font-weight:700; color:var(--accent);}
+  .small{color:var(--muted); font-size:13px;}
+  .svg-wrap{display:flex; align-items:center; justify-content:center; padding:12px;}
+  svg.resistor{width:100%; max-width:520px; height:120px;}
+  .btn{display:inline-block;padding:8px 12px;border-radius:8px;background:var(--accent);color:#042224;font-weight:600;border:none;cursor:pointer;}
+  .footer{margin-top:14px;color:var(--muted);font-size:13px;}
+  .row{display:flex;gap:8px;align-items:center;margin-top:10px;}
+  @media (max-width:800px){ .grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Résistance numérique</h1>
+    <p class="lead">Sélectionne les couleurs des 4 bandes (2 chiffres significatifs + multiplicateur + tolérance). La valeur s'affiche automatiquement.</p>
+
+    <div class="grid">
+      <div class="controls">
+        <div>
+          <label for="b1">Bande 1 — chiffre (1er)</label>
+          <select id="b1" aria-label="Bande 1"></select>
+        </div>
+        <div style="height:10px"></div>
+        <div>
+          <label for="b2">Bande 2 — chiffre (2ème)</label>
+          <select id="b2" aria-label="Bande 2"></select>
+        </div>
+        <div style="height:10px"></div>
+        <div>
+          <label for="mult">Multiplicateur</label>
+          <select id="mult" aria-label="Multiplicateur"></select>
+        </div>
+        <div style="height:10px"></div>
+        <div>
+          <label for="tol">Tolérance</label>
+          <select id="tol" aria-label="Tolérance"></select>
+        </div>
+
+        <div class="row">
+          <button id="random" class="btn" title="Couleurs aléatoires">Aléatoire</button>
+          <button id="copy" class="btn" title="Copier la valeur">Copier valeur</button>
+        </div>
+
+        <div class="footer">
+          <p style="margin:6px 0 0 0">Format : 2 chiffres × multiplicateur. Ex: <span class="small">4 7 × 10³ = 47 kΩ</span></p>
+        </div>
+      </div>
+
+      <div>
+        <div class="res-out">
+          <div class="small">Valeur calculée</div>
+          <div id="value" class="big">-- Ω</div>
+          <div id="tolText" class="small">Tolérance : --</div>
+        </div>
+
+        <div class="svg-wrap">
+          <!-- SVG résistance stylisée avec 4 anneaux modifiables -->
+          <svg class="resistor" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Représentation graphique de la résistance">
+            <defs>
+              <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="6" stdDeviation="10" flood-opacity="0.25"/>
+              </filter>
+            </defs>
+
+            <!-- left wire -->
+            <rect x="0" y="90" width="140" height="20" rx="10" fill="#cbd5e1"/>
+            <!-- body -->
+            <g transform="translate(140,60)">
+              <rect x="0" y="0" width="520" height="80" rx="40" fill="#fff" opacity="0.03" stroke="rgba(255,255,255,0.06)"/>
+              <!-- gold shadow -->
+              <rect x="0" y="0" width="520" height="80" rx="40" fill="#37241b" opacity="0.06"/>
+              <!-- 4 bands -->
+              <rect id="band1" x="80"  y="10" width="40" height="60" rx="6"/>
+              <rect id="band2" x="170" y="10" width="40" height="60" rx="6"/>
+              <rect id="band3" x="290" y="10" width="40" height="60" rx="6"/>
+              <rect id="band4" x="380" y="10" width="24" height="60" rx="6"/>
+              <!-- decoration -->
+              <rect x="0" y="30" width="520" height="20" rx="10" fill="rgba(0,0,0,0.03)"/>
+            </g>
+            <!-- right wire -->
+            <rect x="660" y="90" width="140" height="20" rx="10" fill="#cbd5e1"/>
+          </svg>
+        </div>
+
+        <div style="margin-top:12px;color:var(--muted);font-size:13px">
+          <strong>Info :</strong> ce calcul utilise la convention classique pour une résistance à 4 bandes (2 chiffres + multiplicateur + tolérance).
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // Couleurs et table de correspondance
+  const colorData = [
+    {name:'noir',    hex:'#000000', value:0,  mult:1},
+    {name:'marron',  hex:'#8b4513', value:1,  mult:10},
+    {name:'rouge',   hex:'#d7263d', value:2,  mult:100},
+    {name:'orange',  hex:'#ff7f11', value:3,  mult:1_000},
+    {name:'jaune',   hex:'#ffd200', value:4,  mult:10_000},
+    {name:'vert',    hex:'#2ecc71', value:5,  mult:100_000},
+    {name:'bleu',    hex:'#1e90ff', value:6,  mult:1_000_000},
+    {name:'violet',  hex:'#7b61ff', value:7,  mult:10_000_000},
+    {name:'gris',    hex:'#9ca3af', value:8,  mult:100_000_000},
+    {name:'blanc',   hex:'#ffffff', value:9,  mult:1_000_000_000}
+  ];
+
+  const multExtras = [
+    {name:'or',  hex:'#d4af37', mult:0.1},
+    {name:'argent', hex:'#c0c0c0', mult:0.01}
+  ];
+
+  const tolData = [
+    {name:'±1%', hex:'#7b61ff', text:'±1%'},
+    {name:'±2%', hex:'#c0c0c0', text:'±2%'},
+    {name:'±5%', hex:'#d4af37', text:'±5%'},
+    {name:'±10%', hex:'#ffffff', text:'±10%'},
+    {name:'±0.5%', hex:'#b565a7', text:'±0.5%'}
+  ];
+
+  // Select elements
+  const selB1 = document.getElementById('b1');
+  const selB2 = document.getElementById('b2');
+  const selMult = document.getElementById('mult');
+  const selTol = document.getElementById('tol');
+  const valEl = document.getElementById('value');
+  const tolEl = document.getElementById('tolText');
+  const band1 = document.getElementById('band1');
+  const band2 = document.getElementById('band2');
+  const band3 = document.getElementById('band3');
+  const band4 = document.getElementById('band4'); // tolerance
+
+  // Remplir selects
+  function option(el, text, value, styleHex){
+    const o = document.createElement('option');
+    o.textContent = text;
+    o.value = value;
+    if(styleHex) o.dataset.hex = styleHex;
+    el.appendChild(o);
+  }
+
+  colorData.forEach(c => {
+    option(selB1, c.name + ' ('+c.value+')', c.value, c.hex);
+    option(selB2, c.name + ' ('+c.value+')', c.value, c.hex);
+    option(selMult, c.name + ' ×10^' + c.value, c.mult, c.hex);
+  });
+
+  multExtras.forEach(m => option(selMult, m.name + ' (×' + m.mult + ')', m.mult, m.hex));
+  tolData.forEach(t => option(selTol, t.text, t.text, t.hex));
+
+  // set defaults
+  selB1.value = '4'; // jaune
+  selB2.value = '7'; // vert maybe? but 7 is violet. Let's set common 4 7 = 47
+  // Actually ensure values exist: we used numeric values as strings.
+  // We'll select by index to avoid mismatch:
+  selB1.selectedIndex = 4; // jaune (4)
+  selB2.selectedIndex = 7; // violet (7) -> 47
+  selMult.selectedIndex = 3; // x1_000 (orange)
+  selTol.selectedIndex = 2; // ±5%
+
+  // Update visual color of options (not supported everywhere) and SVG bands
+  function update() {
+    // get numeric digits
+    const d1 = parseInt(selB1.value, 10);
+    const d2 = parseInt(selB2.value, 10);
+    const mult = parseFloat(selMult.value);
+    const tol = selTol.value;
+
+    // compute value: (d1*10 + d2) * mult
+    const raw = (d1*10 + d2) * mult;
+
+    // format
+    function fmt(n){
+      if (n >= 1_000_000) return (n/1_000_000).toFixed(n%1_000_000===0?0:2) + ' MΩ';
+      if (n >= 1_000) return (n/1_000).toFixed(n%1_000===0?0:2) + ' kΩ';
+      return n.toFixed(n%1===0?0:2) + ' Ω';
+    }
+    // special: if raw >= 1e9, show in GΩ
+    let display = '';
+    if (raw >= 1_000_000_000) display = (raw/1_000_000_000).toFixed(2) + ' GΩ';
+    else display = fmt(raw);
+
+    valEl.textContent = display;
+    tolEl.textContent = 'Tolérance : ' + tol;
+
+    // set colors on bands:
+    // find hex for d1,d2, multiplier and tol
+    const col1 = colorData.find(c => c.value === d1)?.hex || '#000';
+    const col2 = colorData.find(c => c.value === d2)?.hex || '#000';
+    // multiplier: could match colorData.mult OR multExtras
+    let colMult = '#333';
+    const mFound = colorData.find(c => c.mult === mult);
+    if(mFound) colMult = mFound.hex;
+    else {
+      const mEx = multExtras.find(me => me.mult === mult);
+      if(mEx) colMult = mEx.hex;
+    }
+    // tolerance color
+    const tolHex = (() => {
+      const t = tolData.find(ti => ti.text === tol);
+      return t ? t.hex : '#fff';
+    })();
+
+    band1.setAttribute('fill', col1);
+    band2.setAttribute('fill', col2);
+    band3.setAttribute('fill', colMult);
+    band4.setAttribute('fill', tolHex);
+  }
+
+  // initial update
+  update();
+
+  // listeners
+  [selB1, selB2, selMult, selTol].forEach(s => s.addEventListener('change', update));
+
+  // random button
+  document.getElementById('random').addEventListener('click', () => {
+    const r1 = Math.floor(Math.random()*10);
+    const r2 = Math.floor(Math.random()*10);
+    const rMultIdx = Math.floor(Math.random()*(selMult.options.length));
+    const rTolIdx = Math.floor(Math.random()*(selTol.options.length));
+    selB1.selectedIndex = r1;
+    selB2.selectedIndex = r2;
+    selMult.selectedIndex = rMultIdx;
+    selTol.selectedIndex = rTolIdx;
+    update();
+  });
+
+  // copy value
+  document.getElementById('copy').addEventListener('click', async () => {
+    const text = valEl.textContent + ' ' + tolEl.textContent;
+    try{
+      await navigator.clipboard.writeText(text);
+      const old = document.getElementById('copy').textContent;
+      document.getElementById('copy').textContent = 'Copié !';
+      setTimeout(()=> document.getElementById('copy').textContent = old, 1200);
+    }catch(e){
+      alert('Impossible de copier automatiquement — copie manuelle :\\n' + text);
+    }
+  });
+
+  // Accessibility: keyboard updates
+  [selB1, selB2, selMult, selTol].forEach(s => {
+    s.addEventListener('input', update);
+  });
+
+})();
+</script>
+</body>
+</html>
