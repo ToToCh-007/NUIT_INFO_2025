@@ -1,6 +1,4 @@
-/* js/app.js - interactions, simulateur, quiz, contribute (no backend) */
 (function(){
-  // NAV TOGGLE (mobile)
   const navToggle = document.getElementById('nav-toggle');
   const mainNav = document.getElementById('main-nav');
   if(navToggle){
@@ -18,7 +16,6 @@
     });
   }
 
-  // HOME QUIZ
   const options = document.querySelectorAll('.quiz-options .option');
   const homeRes = document.getElementById('home-quiz-result');
   if(options && homeRes){
@@ -34,7 +31,6 @@
     }));
   }
 
-  // helpers for simulateur
   window.updateLabel = function(id,val){
     const el = document.getElementById(id);
     if(el) el.textContent = val;
@@ -77,7 +73,6 @@
     const out = document.getElementById('sim-result'); if(out) out.innerHTML = '';
   };
 
-  // contribution prototype (stores locally)
   window.submitContrib = function(){
     const name = (document.getElementById('cname') || {}).value || '';
     const email = (document.getElementById('cemail') || {}).value || '';
@@ -102,7 +97,6 @@
     const res = document.getElementById('contrib-res'); if(res) res.textContent = '';
   };
 
-  // init label if present
   if(document.getElementById('l1') && document.getElementById('r1')){
     updateLabel('l1', document.getElementById('r1').value);
   }
